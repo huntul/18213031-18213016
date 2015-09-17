@@ -1,3 +1,5 @@
+package tcp;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +17,7 @@ import java.net.Socket;
  * connection with that client.  Arguably just about the simplest
  * server you can write.
  */
-public class ServerSendFile {
+public class Server {
 
     /**
      * Runs the server.
@@ -25,10 +27,9 @@ public class ServerSendFile {
         try {
             while (true) {
                 Socket socket = listener.accept();
-                FileInputStream fis = null;
+                File myFile = null;
                 BufferedInputStream bis = null;
                 OutputStream os = null;
-                File myFile = null;
                 String line = null;
     			PrintWriter toClient = 
     				new PrintWriter(socket.getOutputStream(),true);
@@ -43,38 +44,32 @@ public class ServerSendFile {
             		System.out.println("Server received: " + line);
             		if (line.equals("1")) {
             			myFile = new File ("D:/Kuliah/STI/Semester 5/pemrograman integratif/Server Java/Data Server/Ghazwan.txt");
-            	        byte [] mybytearray  = new byte [(int)myFile.length()];
-            	        fis = new FileInputStream(myFile);
-            	        bis = new BufferedInputStream(fis);
-            	        bis.read(mybytearray,0,mybytearray.length);
-            	        os = socket.getOutputStream();
-                        System.out.println("Sending Ghazwan.txt (" + mybytearray.length + " bytes)");
-           	            os.write(mybytearray,0,mybytearray.length);
-            	        os.flush();
+            		    byte[] mybytearray = new byte[(int) myFile.length()];
+            		    bis = new BufferedInputStream(new FileInputStream(myFile));
+            		    bis.read(mybytearray, 0, mybytearray.length);
+            		    os = socket.getOutputStream();
+            		    os.write(mybytearray, 0, mybytearray.length);
+            		    os.flush();
                 		toClient.println("Ghazwan.txt sent!");
             	        System.out.println("Done!");
            			} else if (line.equals("2")) {
             			myFile = new File ("D:/Kuliah/STI/Semester 5/pemrograman integratif/Server Java/Data Server/Huntul.txt");
-            	        byte [] mybytearray  = new byte [(int)myFile.length()];
-            	        fis = new FileInputStream(myFile);
-            	        bis = new BufferedInputStream(fis);
-            	        bis.read(mybytearray,0,mybytearray.length);
-            	        os = socket.getOutputStream();
-                        System.out.println("Sending Huntul.txt (" + mybytearray.length + " bytes)");
-           	            os.write(mybytearray,0,mybytearray.length);
-            	        os.flush();
-               			toClient.println("Huntul.txt sent!");
+            			byte[] mybytearray = new byte[(int) myFile.length()];
+            		    bis = new BufferedInputStream(new FileInputStream(myFile));
+            		    bis.read(mybytearray, 0, mybytearray.length);
+            		    os = socket.getOutputStream();
+            		    os.write(mybytearray, 0, mybytearray.length);
+            		    os.flush();
+            		    toClient.println("Huntul.txt sent!");
             	        System.out.println("Done!");
            			} else if (line.equals("3")) {
             			myFile = new File ("D:/Kuliah/STI/Semester 5/pemrograman integratif/Server Java/Data Server/Kuvluk.txt");
-            	        byte [] mybytearray  = new byte [(int)myFile.length()];
-            	        fis = new FileInputStream(myFile);
-            	        bis = new BufferedInputStream(fis);
-            	        bis.read(mybytearray,0,mybytearray.length);
-            	        os = socket.getOutputStream();
-                        System.out.println("Sending Kuvluk.txt (" + mybytearray.length + " bytes)");
-           	            os.write(mybytearray,0,mybytearray.length);
-            	        os.flush();
+            			byte[] mybytearray = new byte[(int) myFile.length()];
+            		    bis = new BufferedInputStream(new FileInputStream(myFile));
+            		    bis.read(mybytearray, 0, mybytearray.length);
+            		    os = socket.getOutputStream();
+            		    os.write(mybytearray, 0, mybytearray.length);
+            		    os.flush();
                			toClient.println("Kuvluk.txt sent!");
             	        System.out.println("Done!");
            			} else if (line.equals("bye")) {
