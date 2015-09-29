@@ -1,21 +1,18 @@
 package tcp;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
 
-import javax.swing.JOptionPane;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Trivial client for the date server.
  */
-public class HTMLClient {
+public class Client {
 
     /**
      * Runs the client as an application.  First it displays a dialog
@@ -23,26 +20,42 @@ public class HTMLClient {
      * the date server, then connects to it and displays the date that
      * it serves.
      */
+	
+    private static void print(String msg, Object... args) {
+        System.out.println(String.format(msg, args));
+    }
+
+    private static String trim(String s, int width) {
+        if (s.length() > width)
+            return s.substring(0, width-1) + ".";
+        else
+            return s;
+    }
+
+	
     public static void main(String[] args) throws IOException {
-        Socket s = new Socket(("www.itb.ac.id"), 80);
-        try {
-            String message;
-            int count  = 0;
-            PrintWriter out =
-                new PrintWriter(s.getOutputStream(), true);
-            BufferedReader input =
-                new BufferedReader(new InputStreamReader(s.getInputStream()));
-            out.println("GET / HTTP/1.0"); 
-            out.println(); 
-            out.flush(); 
-            while ((message = input.readLine()) != null) { 
-            	count++; 
-            	System.out.println(count); 
-            	System.out.println(message); 
-            } 
-            input.close(); 
-        } finally {
-            if (s != null) s.close();
+        Document doc = Jsoup.connect("http://www.itb.ac.id/").timeout(30000).get();
+        Elements links = doc.select("a[href]");
+        
+        File file = new File("D:/Kuliah/STI/Semester 5/pemrograman integratif/Server Java/Data Client/Home.html");
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file);
+    	writer.write(doc.body().toString());
+        writer.flush();
+        writer.close();
+        
+        print("\nLinks: (%d)", links.size());
+        for (Element link : links) {
+            print(" * a: <%s>  (%s)", link.attr("abs:href"), trim(link.text(), 35));
+        }
+
+        for (Element link : links) {
+            doc = Jsoup.connect(link.attr("abs:href")).timeout(30000).userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21").ignoreHttpErrors(true).followRedirects(true).ignoreContentType(true).get();
+            file = new File("D:/Kuliah/STI/Semester 5/pemrograman integratif/Server Java/Data Client/" + trim(link.text(), 35) + ".html");
+            writer = new FileWriter(file);
+        	writer.write(doc.body().toString());
+            writer.flush();
+            writer.close();
         }
         
         System.exit(0);
